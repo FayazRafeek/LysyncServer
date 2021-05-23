@@ -13,7 +13,6 @@ const addUser = async (name1,email1,pass1) => {
         name: name1,
         email: email1,
         pass: pass1,
-        fcmTokens : [fcmToken]
       };
 
     const i = await db.collection('Users').add(data)
