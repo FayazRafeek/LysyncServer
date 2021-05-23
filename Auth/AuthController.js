@@ -65,7 +65,6 @@ router.post('/login', function(req, res) {
     .then((result) => {
         if(result.status){
             var user = result.user
-                    
             console.log(user);
             var hashPass = user.data().pass;
             var passwordIsValid = bcrypt.compareSync(pass, hashPass);
@@ -75,6 +74,7 @@ router.post('/login', function(req, res) {
 
             if(passwordIsValid){
 
+                console.log('Password valid');
                 var uId = user.id
 
                 var token = jwt.sign({ id: uId }, config.secret, {
@@ -83,9 +83,11 @@ router.post('/login', function(req, res) {
 
                 firestore.updateToken(uId,token)
                 .then(r => {
+                    console.log('Token Updated');
                     res.status(200).send({status : true, token : token})
                 })
                 .catch(e => {
+                    console.log(e);
                     res.status(400).send({status : false, message : 'Failed to get auth token'})
                 })
 
@@ -94,6 +96,7 @@ router.post('/login', function(req, res) {
                 res.status(400).send({status : false, message : 'Password Invalid'})
             }
         } else {
+            console.log('No invalid');
             res.status(404).send({status : false, message : result.message})
         }
     })
