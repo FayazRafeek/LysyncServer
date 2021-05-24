@@ -31,4 +31,20 @@ router.post('/addDevice', VerifyToken, function(req, res, next) {
 
 });
 
+
+router.delete('/removeDevice', VerifyToken, function(req, res, next) {
+  
+    var uId = req.userId;
+    var deviceId = req.body.deviceId;
+
+    firestore.removeDevice(uId,deviceId)
+    .then((result) => {
+        res.send({status : true})
+    })
+    .catch(e => {
+        res.send({status : false})
+    })
+
+});
+
 module.exports = router

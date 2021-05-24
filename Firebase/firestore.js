@@ -55,12 +55,17 @@ const addDevice = async (uId,device) => {
     return await db.collection('Users').doc(uId).collection('Devices').doc(device.deviceId).set(device)
 }
 
+const removeDevice = async (uId,deviceId) => {
+    return await db.collection('Users').doc(uId).collection('Devices').doc(deviceId).delete()
+}
+
 const getDevices = async (uId) => {
     return await db.collection('Users').doc(uId).collection('Devices').get()
 }
 
 module.exports.addDevice = addDevice;
 module.exports.getDevices = getDevices;
+module.exports.removeDevice = removeDevice;
 
 // DATA LOGIC
 
