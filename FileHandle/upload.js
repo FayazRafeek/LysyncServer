@@ -11,8 +11,7 @@ const AWS = require('aws-sdk');
 const ID = 'AKIAURXC5IGG2R4TI2DA';
 const SECRET = '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';
 
-var fs = require('fs');
-const { log } = require('console');
+var fs = require('fs')
 
 const s3 = new AWS.S3({
   accessKeyId: ID,
@@ -29,6 +28,8 @@ router.post('/uploadFile', function(req, res) {
   console.log('Request reached');
   let sampleFile;
   let uploadPath;
+  
+
 
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).send('No files were uploaded.');
@@ -36,9 +37,10 @@ router.post('/uploadFile', function(req, res) {
 
   // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
   sampleFile = req.files.sampleFile;
-  uploadPath = __dirname + ""
+  uploadPath = __dirname + ' + sampleFile.name';
 
-  console.log(uploadPath);
+  
+
   console.log(sampleFile);
 
   // Use the mv() method to place the file somewhere on your server
@@ -46,32 +48,16 @@ router.post('/uploadFile', function(req, res) {
   //   if (err)
   //     return res.status(500).send(err);
 
-  //     const fileContent = fs.readFileSync(uploadPath);
-
-  //     // Setting up S3 upload parameters
-  //     const params = {
-  //         Bucket: 'lysyncbucket',
-  //         Key: fileName, // File name you want to save as in S3
-  //         Body: fileContent
-  //     };
-    
-    
-  //     s3.upload(params, function(err, data) {
-  //       if (err) {
-  //         res.send('Error uploading');
-  //       }
-  //       res.send('File uploaded!');
-  //       console.log(`File uploaded successfully. ${data.Location}`);
-  //   });
   // });
 
+  const fileContent = fs.readFileSync('index.js');
 
-    // Setting up S3 upload parameters
-    const params = {
-        Bucket: 'lysyncbucket',
-        Key: 'sampleFile.txt', // File name you want to save as in S3
-        Body: sampleFile
-    };
+  // Setting up S3 upload parameters
+  const params = {
+      Bucket: 'lysyncbucket',
+      Key: 'index.html', // File name you want to save as in S3
+      Body: fileContent
+  };
 
 
     s3.upload(params, function(err, data) {
