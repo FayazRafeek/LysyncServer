@@ -8,10 +8,12 @@ const fileUpload = require('express-fileupload');
 const verifyToken = require('../Auth/VerifyToken');
 
 // default options
-router.use(fileUpload());
-router.use('/form', express.static(__dirname + '/index.html'));
+// router.use(fileUpload());
+// router.use('/form', express.static(__dirname + '/index.html'));
 
 router.post('/uploadFile', function(req, res) {
+
+  console.log('Request reached');
   let sampleFile;
   let uploadPath;
 
