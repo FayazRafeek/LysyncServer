@@ -30,43 +30,56 @@ router.post('/uploadFile', function(req, res) {
   let sampleFile;
   let uploadPath;
 
-  var fileName = req.body.fileName;
-
-
-
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).send('No files were uploaded.');
   }
 
   // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
   sampleFile = req.files.sampleFile;
-  uploadPath = __dirname + "/static/" + fileName
+  uploadPath = __dirname + ""
 
   console.log(uploadPath);
   console.log(sampleFile);
 
   // Use the mv() method to place the file somewhere on your server
-  sampleFile.mv(uploadPath, function(err) {
-    if (err)
-      return res.status(500).send(err);
+  // sampleFile.mv(uploadPath, function(err) {
+  //   if (err)
+  //     return res.status(500).send(err);
 
-      const fileContent = fs.readFileSync(uploadPath);
+  //     const fileContent = fs.readFileSync(uploadPath);
 
-      // Setting up S3 upload parameters
-      const params = {
-          Bucket: 'lysyncbucket',
-          Key: fileName, // File name you want to save as in S3
-          Body: fileContent
-      };
+  //     // Setting up S3 upload parameters
+  //     const params = {
+  //         Bucket: 'lysyncbucket',
+  //         Key: fileName, // File name you want to save as in S3
+  //         Body: fileContent
+  //     };
     
     
-      s3.upload(params, function(err, data) {
-        if (err) {
-          res.send('Error uploading');
-        }
-        res.send('File uploaded!');
-        console.log(`File uploaded successfully. ${data.Location}`);
-    });
+  //     s3.upload(params, function(err, data) {
+  //       if (err) {
+  //         res.send('Error uploading');
+  //       }
+  //       res.send('File uploaded!');
+  //       console.log(`File uploaded successfully. ${data.Location}`);
+  //   });
+  // });
+
+
+    // Setting up S3 upload parameters
+    const params = {
+        Bucket: 'lysyncbucket',
+        Key: 'sampleFile.txt', // File name you want to save as in S3
+        Body: sampleFile
+    };
+
+
+    s3.upload(params, function(err, data) {
+      if (err) {
+        res.send('Error uploading');
+      }
+      res.send('File uploaded!');
+      console.log(`File uploaded successfully. ${data.Location}`);
   });
 
 });
