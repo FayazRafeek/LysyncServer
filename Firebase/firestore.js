@@ -84,11 +84,11 @@ const getAllDatas = async (uId) => {
 
         r.forEach(doc => {
             var value = doc.data().data
-            var modified =  doc.data().modified
+            var modified =  doc.data().modified._seconds
             output.push({value : value, modified : modified})
         })
 
-        return {status : 'SUCCESS', output :  JSON.stringify(output)}
+        return {status : 'SUCCESS', output : output}
     } else {
         return {status : 'FAILED', output : ''}
     }                           

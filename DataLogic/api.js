@@ -38,6 +38,8 @@ router.get('/getAllDatas', VerifyToken, function(req, res, next) {
 
     firestore.getAllDatas(uId)
     .then((result) => {
+        console.log(result.output);
+        console.log(JSON.stringify(result.output));
         res.status(200).send(result.output)
     })
     .catch(e => {
