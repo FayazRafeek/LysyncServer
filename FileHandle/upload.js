@@ -7,15 +7,31 @@ router.use(bodyParser.json());
 const fileUpload = require('express-fileupload');
 const verifyToken = require('../Auth/VerifyToken');
 
+const AWS = require('aws-sdk');
+const ID = 'AKIAURXC5IGG2R4TI2DA';
+const SECRET = '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';
+
+var fs = require('fs');
+const { log } = require('console');
+
+const s3 = new AWS.S3({
+  accessKeyId: ID,
+  secretAccessKey: SECRET
+});
+
+
 // default options
-// router.use(fileUpload());
-// router.use('/form', express.static(__dirname + '/index.html'));
+router.use(fileUpload());
+router.use('/form', express.static(__dirname + '/index.html'));
 
 router.post('/uploadFile', function(req, res) {
 
   console.log('Request reached');
   let sampleFile;
   let uploadPath;
+
+  var fileName = req.body.fileName;
+
 
 
   if (!req.files || Object.keys(req.files).length === 0) {
@@ -24,8 +40,9 @@ router.post('/uploadFile', function(req, res) {
 
   // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
   sampleFile = req.files.sampleFile;
-  uploadPath = __dirname + ' + sampleFile.name';
+  uploadPath = __dirname + "/static/" + fileName
 
+  console.log(uploadPath);
   console.log(sampleFile);
 
   // Use the mv() method to place the file somewhere on your server
@@ -33,9 +50,40 @@ router.post('/uploadFile', function(req, res) {
     if (err)
       return res.status(500).send(err);
 
-    res.send('File uploaded!');
+      const fileContent = fs.readFileSync(uploadPath);
+
+      // Setting up S3 upload parameters
+      const params = {
+          Bucket: 'lysyncbucket',
+          Key: fileName, // File name you want to save as in S3
+          Body: fileContent
+      };
+    
+    
+      s3.upload(params, function(err, data) {
+        if (err) {
+          res.send('Error uploading');
+        }
+        res.send('File uploaded!');
+        console.log(`File uploaded successfully. ${data.Location}`);
+    });
   });
+
 });
+
+router.get('/downloadFile', function(req, res) {
+
+  const fileName = req.params.name;
+  const directoryPath =  __dirname;
+
+  res.download(directoryPath + '\\upload.js', 'server.js', (err) => {
+    if (err) {
+      res.status(500).send({
+        message: "Could not download the file. " + err,
+      });
+    }
+  })
+})
 
 module.exports = router;
 
