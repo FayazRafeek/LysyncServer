@@ -22,13 +22,15 @@ const notifyDataAdd = async (uId,data) => {
         console.log(fcmTokens.length);
 
 
-        await fcm.notifyDataAdd(fcmTokens,data)
-        .then(r => {
-            return r;
-        })
-        .catch(e => {
-            return e;
-        })
+        return await fcm.notifyDataAdd(fcmTokens,data)
+      
+        // console.log(r);
+        // .then(r => {
+        //     return r;
+        // })
+        // .catch(e => {
+        //     return e;
+        // })
 
     } else {
         return;
