@@ -35,41 +35,35 @@ function uploadFile(req,res,next){
     console.log("Else File => " + req.file);
 
 
-    
-    res.send({error: false,message : "" , image : "Image"})
+    const params = {
+      Bucket: 'lysyncbucket',
+      Key: "user/" + userId + "/" + fileName, // File name you want to save as in S3
+      Body: inputFile.data
+    };
 
+      s3.upload(params, function(err, data) {
+        if (err) {
+         return res.send('Error uploading');
+        }
 
+        dataLogic.addData(userId,data.Location)
+        .then( r=> {
+          if(r && r.status)
+            dataLogic.notifyUsers(userId,data.Location)
+            .then( r => {
+              return  res.send({error : false, message : "", image : data.Location});
+            })
+            .catch( e => {
+              return  res.send({error : true, message : "Not send", image : fileName});
+            })
+          else
+            res.send('File upload Failed!');
 
-
-    // const params = {
-    //   Bucket: 'lysyncbucket',
-    //   Key: "user/" + userId + "/" + fileName, // File name you want to save as in S3
-    //   Body: inputFile.data
-    // };
-
-    //   s3.upload(params, function(err, data) {
-    //     if (err) {
-    //      return res.send('Error uploading');
-    //     }
-
-    //     dataLogic.addData(userId,data.Location)
-    //     .then( r=> {
-    //       if(r && r.status)
-    //         dataLogic.notifyUsers(userId,data.Location)
-    //         .then( r => {
-    //           return  res.send({error : false, message : "", image : data.Location});
-    //         })
-    //         .catch( e => {
-    //           return  res.send({error : true, message : "Not send", image : fileName});
-    //         })
-    //       else
-    //         res.send('File upload Failed!');
-
-    //     })
-    //     .catch( e => {
-    //       res.send('File upload Failed!');
-    //     })
-    // });
+        })
+        .catch( e => {
+          res.send('File upload Failed!');
+        })
+    });
 
 }
 
