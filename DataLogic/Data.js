@@ -1,16 +1,48 @@
 
+const { text } = require('express');
 var firestore = require('../Firebase/firestore');
 var notify = require('./notify')
 
-const addData = (uId,data) =>  {
+const addData = (uId,body) =>  {
+
+
+    var isSmallData = body.isSmallData; 
+    let payload;
+
+    if(isSmallData){
+        var data = body.data
+        var size = body.size
+
+        payload = {
+            isShortData : true,
+            data : data,
+            modified : new Date(),
+            type : text,
+            size : size,
+            id : new Date().getMilliseconds()
+        }
+    } else {
+
+        var url = body.url
+        var type = body.type
+        var fileName = body.fileName
+        var size = body.size
+
+        payload = {
+            isShortData : false,
+            modified : new Date(),
+            type : type,
+            size : size,
+            fileName : fileName,
+            url : url,
+            id : new Date().getMilliseconds()
+        }
+    }
 
     return new Promise((resolve,reject) => {
-
-        console.log("DATA ADDED");
-        firestore.addData(uId,data)
+        firestore.addData(uId,payload)
         .then((result) => {
-            console.log("Add data result " + result);
-            resolve({status : true})
+            resolve({status : true, payload : payload})
             return
         })
         .catch(e => {
@@ -21,13 +53,12 @@ const addData = (uId,data) =>  {
     })
 }
 
-const notifiUsers = (uId,data) => {
+const notifiUsers = (uId,payload) => {
 
     return new Promise((resolve,reject) => {
-        notify.notifyDataAdd(uId,data)
+        notify.notifyDataAdd(uId,payload)
         .then( result2 => {
-            console.log(result2);
-            resolve({status : true})
+            resolve(result2)
             return
         })
         .catch(error => {

@@ -13,10 +13,23 @@ const addUser = async (name1,email1,pass1) => {
         name: name1,
         email: email1,
         pass: pass1,
+        gUser : false
       };
 
     const i = await db.collection('Users').add(data)
     return  i.id
+}
+
+const addGUser = async (name,email,uId) => {
+
+    const data = {
+        name: name,
+        email: email,
+        gUser:true
+      };
+
+    const i = await db.collection('Users').doc(uId).set(data)
+    return  i.writeTime
 }
 
 const updateToken = async (Uid,token) => {
@@ -43,6 +56,7 @@ const getUserWithEmail = async (email) => {
 }
 
 module.exports.addUser = addUser;
+module.exports.addGUser = addGUser;
 module.exports.updateToken = updateToken;
 module.exports.getUser = getUser;
 module.exports.getUserWithEmail = getUserWithEmail;
@@ -70,8 +84,8 @@ module.exports.removeDevice = removeDevice;
 // DATA LOGIC
 
 
-const addData = async (uId,data) => {
-    return await db.collection('Users').doc(uId).collection('Datas').add({data : data, modified : new Date()})
+const addData = async (uId,payload) => {
+    return await db.collection('Users').doc(uId).collection('Datas').doc(payload.id).set(payload)
 }
 
 const getAllDatas = async (uId) => {
@@ -81,16 +95,12 @@ const getAllDatas = async (uId) => {
     var output = [];
 
     if(!r.empty){
-
         r.forEach(doc => {
-            var value = doc.data().data
-            var modified =  doc.data().modified._seconds
-            output.push({value : value, modified : modified})
+           output.push(doc.data())
         })
-
-        return {status : 'SUCCESS', output : output}
+        return {status : true, output : output}
     } else {
-        return {status : 'FAILED', output : ''}
+        return {status : true, output : ''}
     }                           
 
 }

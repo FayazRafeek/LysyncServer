@@ -19,79 +19,81 @@ function uploadFile(req,res,next){
 
     var userId = req.userId 
     var fileName = req.body.fileName
-
-    console.log("UserID : " + userId);
-    console.log("Filename : " + fileName);
-    console.log("Req Body : " + req.body);
-
+    var type = req.body.type
+    var size = req.body.size
 
     if (!req.files || Object.keys(req.files).length === 0) {
-    return res.status(400).send({error : true,message : "No files found"});
+      return res.status(400).send({error : true,message : "No files found"});
     }
 
     inputFile = req.files.file;
 
-    console.log("Input files => " + inputFile);
-    console.log("Else File => " + req.file);
-
+    var fileUri = "Users/" + userId + "/" + fileName + new Date().getMilliseconds()
 
     const params = {
       Bucket: 'lysyncbucket',
-      Key: "user/" + userId + "/" + fileName, // File name you want to save as in S3
+      Key: fileUri, // File name you want to save as in S3
       Body: inputFile.data
     };
 
-      s3.upload(params, function(err, data) {
-        if (err) {
-         return res.send('Error uploading');
-        }
+    s3.upload(params, function(err, data) {
 
-        dataLogic.addData(userId,data.Location)
-        .then( r=> {
-          if(r && r.status)
-            dataLogic.notifyUsers(userId,data.Location)
-            .then( r => {
-              return  res.send({error : false, message : "", image : data.Location});
-            })
-            .catch( e => {
-              return  res.send({error : true, message : "Not send", image : fileName});
-            })
-          else
-            res.send('File upload Failed!');
+      if (err) {
+        return res.send('Error uploading');
+      }
 
-        })
-        .catch( e => {
-          res.send('File upload Failed!');
-        })
-    });
+      var payload = {
+        url = fileUri,
+        type : type,
+        fileName : fileName,
+        size : size
+      }
+
+      dataLogic.addData(userId,payload)
+      .then( r=> {
+        if(r && r.status)
+          dataLogic.notifyUsers(userId,res.payload)
+          .then( r => {
+              res.send(r)
+          })
+          .catch(e => {
+              res.send({status : true, successCount : 0})
+          })
+        else
+          res.send({status : false, message : 'File upload failed'});
+
+      })
+      .catch( e => {
+        res.send({status : false, message : 'File upload failed'});
+      })
+  });
 
 }
 
 function downloadFile(req, res) {
 
     var userId = req.userId
+    var url = req.body.url
+    var type = req.body.type
     var fileName = req.body.fileName
-  
-    // res.download(directoryPath + '\\upload.js', 'server.js', (err) => {
-    //   if (err) {
-    //     res.status(500).send({
-    //       message: "Could not download the file. " + err,
-    //     });
-    //   }
-    // })
 
     var params = {
-      Key: "user/" + userId + "/" + fileName,
+      Key: url,
       Bucket: 'lysyncbucket'
     }
+
     s3.getObject(params, function(err, data) {
+
         if (err) {
             res.send('Download error')
         }
-        fs.writeFileSync('./static/fayaz.jpg', data.Body)
-        console.log(__dirname);
-        console.log('file downloaded successfully')
-        res.download('./static/fayaz.jpg','fayaz.jpg')
+
+        var tempUri = "./static/" + userId + "/" + fileName + "." + type;
+
+        fs.writeFileSync(tempUri, data.Body)
+        res.download(tempUri,fileName + "." + type)
+        fs.unlinkSync(tempUri)
+
     })
 }
 
