@@ -89,14 +89,29 @@ router.post('/registerGUser',function(req,res) {
                             var token = jwt.sign({ id: uId }, config.secret, {
                                 expiresIn: 86400 // expires in 24 hours
                                 });
-    
+
                             return res.send({status : true, token : token})
                         } else {
                             return res({status : false, message : "Failed to Add User", errorCode : 102})
                         }
                     
                      })
-            }
+            }).catch( e => {
+                firestore.addGUser(name,email,uId)
+                .then( r => {
+                   if(r){
+                       var token = jwt.sign({ id: uId }, config.secret, {
+                           expiresIn: 86400 // expires in 24 hours
+                           });
+
+                       return res.send({status : true, token : token})
+                   } else {
+                       return res({status : false, message : "Failed to Add User", errorCode : 102})
+                   }
+               
+                })
+            })
+    
         }
     })
     .catch( e => {
