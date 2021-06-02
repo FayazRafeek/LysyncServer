@@ -48,9 +48,8 @@ const getUserWithEmail = async (email) => {
     const res = await  db.collection('Users').where('email', '==', email).limit(1).get();
 
     if(res.empty || res.docs.length < 1){
-        return {status : false, user : '', message : 'No User Available'}
+        return {status : false}
     }
-
     var doc = res.docs[0]
     return {status : true, user : doc}
 }

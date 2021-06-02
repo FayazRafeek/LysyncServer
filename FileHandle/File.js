@@ -2,8 +2,6 @@ const AWS = require('aws-sdk');
 const ID = 'AKIAURXC5IGG2R4TI2DA';
 const SECRET = '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';
 
-const { v4: uuidv4 } = require('uuid');
-
 const fs = require('fs')
 
 const s3 = new AWS.S3({
@@ -43,7 +41,7 @@ function uploadFile(req,res,next){
       }
 
       var payload = {
-        url = fileUri,
+        url : fileUri,
         type : type,
         fileName : fileName,
         size : size

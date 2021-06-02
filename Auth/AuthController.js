@@ -126,17 +126,15 @@ router.get('/getUser', VerifyToken, function(req, res, next) {
     firestore.getUser(req.userId)
       .then((result) => {
           if(result.exists){
-              
-            var uId = result.id
             var email = result.data().email;
             var name = result.data().name;
-            res.status(200).send({name : name,email : email});
+            res.send({name : name,email : email});
           }
           else
-            res.status(404).send("User Does not Exist");
+            res.send({status : false, message : "No User Found", errorCode : 107});
       })
       .catch((e) => {
-        res.status(400).send("Error");
+        res.send({status : false, message : "No User Found", errorCode : 107});
       })
 });
 
@@ -147,34 +145,30 @@ router.post('/login', function(req, res) {
 
     firestore.getUserWithEmail(email)
     .then((result) => {
+
         if(result.status){
+
             var user = result.user
-            console.log(user);
             var hashPass = user.data().pass;
             var passwordIsValid = bcrypt.compareSync(pass, hashPass);
 
             if(passwordIsValid){
                 
                 var uId = user.id
-
                 var token = jwt.sign({ id: uId }, config.secret, {
                     expiresIn: 86400 // expires in 24 hours
                     });
-
-                res.status(200).send({status : true, token : token})
+                return res.send({status : true, token : token})
 
             } else {  
-                console.log("Password invalid");
-                res.status(400).send({status : false, message : 'Password Invalid'})
+                return res.send({status : false, message : 'Password Invalid', errorCode : 105})
             }
         } else {
-            console.log('No invalid');
-            res.status(404).send({status : false, message : result.message})
+            res.send({status : false, message : "User Not Found!!", errorCode : 106})
         }
     })
     .catch((e) => {
-        console.log(e);
-        res.status(404).send({auth : false, message : 'Failed toget user'})
+        return res.send({status : false, message : "User Not Found!!", errorCode : 106})
     })
 });
 
@@ -187,6 +181,7 @@ router.post('/loginGUser', function(req, res) {
     }).then( r => {
 
        if(r){
+
            var email = r.getPayload().email
 
            firestore.getUserWithEmail(email)
@@ -201,21 +196,22 @@ router.post('/loginGUser', function(req, res) {
                         expiresIn: 86400 // expires in 24 hours
                         });
 
-                    res.status(200).send({status : true, token : token, name : name})
+                    res.send({status : true, token : token})
 
                 } else {
-                    return res.status(404).send({status : false, message : result.message})
+                    res.send({status : false, message : "User Not Found!!", errorCode : 106})
                 }
             })
             .catch((e) => {
-                console.log(e);
-                res.status(404).send({status : false, message : 'Failed to get user'})
+                res.send({status : false, message : "User Not Found!!", errorCode : 106})
             })
 
+       } else {
+        res.send({status : false, message : "Invalid Token", errorCode : 104})
        }
     })
     .catch( e => {
-
+        res.send({status : false, message : "Invalid Token", errorCode : 104})
     })
 });
 
