@@ -43,8 +43,7 @@ router.get('/getAllDatas', VerifyToken, function(req,res,next){
         }
     })
     .catch( e => {
-        res.send({s]
-            tatus : false,message : 'Failed to get datas'})
+        res.send({status : false,message : 'Failed to get datas'})
     })
 });
 
