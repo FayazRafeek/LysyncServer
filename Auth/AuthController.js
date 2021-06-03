@@ -81,7 +81,7 @@ router.post('/registerGUser',function(req,res) {
             firestore.getUserWithEmail(email)
             .then((result) => {
                 if(result.status)
-                    return res({status : false, message : "User Already Exist, Try logging in", errorCode : 101})
+                    return res.send({status : false, message : "User Already Exist, Try logging in", errorCode : 101})
                 else
                     firestore.addGUser(name,email,uId)
                      .then( r => {
@@ -92,7 +92,7 @@ router.post('/registerGUser',function(req,res) {
 
                             return res.send({status : true, token : token})
                         } else {
-                            return res({status : false, message : "Failed to Add User", errorCode : 102})
+                            return res.send({status : false, message : "Failed to Add User", errorCode : 102})
                         }
                     
                      })
@@ -106,7 +106,7 @@ router.post('/registerGUser',function(req,res) {
 
                        return res.send({status : true, token : token})
                    } else {
-                       return res({status : false, message : "Failed to Add User", errorCode : 102})
+                       return res.send({status : false, message : "Failed to Add User", errorCode : 102})
                    }
                
                 })
