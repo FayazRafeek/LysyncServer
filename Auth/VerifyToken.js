@@ -15,6 +15,7 @@ function verifyToken(req, res, next) {
     // if everything good, save to request for use in other routes
     console.log("Decoded -> " + decoded);
     req.userId = decoded.id;
+    console.log("\n\nReq Bodu ==> " + JSON.stringify(req.body));
     next();
     
   });

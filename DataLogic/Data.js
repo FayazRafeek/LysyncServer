@@ -5,11 +5,10 @@ var notify = require('./notify')
 
 const addData = (uId,body) =>  {
 
-    console.log("Add Data body -> \n" + body);
-
     var isSmallData = body.isSmallData; 
     let payload, notificationPayload;
 
+    var currTime = new Date().getTime().toString()
     if(isSmallData){
         var data = body.data
         var size = body.size
@@ -17,10 +16,10 @@ const addData = (uId,body) =>  {
         payload = {
             isShortData : true,
             data : data,
-            modified : new Date(),
-            type : text,
+            modified : currTime,
+            type : "text",
             size : size,
-            id : new Date().getMilliseconds()
+            id : currTime
         }
 
         notificationPayload = {
@@ -37,12 +36,12 @@ const addData = (uId,body) =>  {
 
         payload = {
             isShortData : false,
-            modified : new Date(),
+            modified : currTime,
             type : type,
             size : size,
             fileName : fileName,
             url : url,
-            id : new Date().getMilliseconds()
+            id : currTime
         }
 
         notificationPayload = {
@@ -52,6 +51,9 @@ const addData = (uId,body) =>  {
         }
     }
 
+    console.log("Payload => " + JSON.stringify(payload));
+    var id = payload.id
+    console.log("Payload ID  => " + id);
 
     return new Promise((resolve,reject) => {
         firestore.addData(uId,payload)
@@ -60,6 +62,7 @@ const addData = (uId,body) =>  {
             return
         })
         .catch(e => {
+            console.log("Add Error => " + e);
             resolve({status: false, message : 'Failed to add data'})
             return 
         })

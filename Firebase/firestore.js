@@ -84,6 +84,7 @@ module.exports.removeDevice = removeDevice;
 
 
 const addData = async (uId,payload) => {
+    
     return await db.collection('Users').doc(uId).collection('Datas').doc(payload.id).set(payload)
 }
 
