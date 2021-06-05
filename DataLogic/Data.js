@@ -5,6 +5,7 @@ var notify = require('./notify')
 
 const addData = (uId,body) =>  {
 
+    console.log("Add Data body -> \n" + body);
 
     var isSmallData = body.isSmallData; 
     let payload, notificationPayload;

@@ -11,6 +11,7 @@ var VerifyToken = require('../Auth/VerifyToken');
 router.post('/addData', VerifyToken, function(req,res,next){
 
     var userId = req.userId   
+    console.log("User Id in 1 layer -> " + userId);
 
     dataLogic.addData(userId,req.body)
     .then( (r) => {
