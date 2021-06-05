@@ -23,6 +23,7 @@ router.post('/addDevice', VerifyToken, function(req, res, next) {
         fcmToken : fcmToken
     }
 
+    
     firestore.addDevice(uId,device)
     .then((result) => {
         res.send({status : true})

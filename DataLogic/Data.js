@@ -7,7 +7,7 @@ const addData = (uId,body) =>  {
 
 
     var isSmallData = body.isSmallData; 
-    let payload;
+    let payload, notificationPayload;
 
     if(isSmallData){
         var data = body.data
@@ -20,6 +20,12 @@ const addData = (uId,body) =>  {
             type : text,
             size : size,
             id : new Date().getMilliseconds()
+        }
+
+        notificationPayload = {
+            title : "New Data added",
+            desc : data,
+            type : text
         }
     } else {
 
@@ -37,17 +43,24 @@ const addData = (uId,body) =>  {
             url : url,
             id : new Date().getMilliseconds()
         }
+
+        notificationPayload = {
+            title : "New File added",
+            desc : fileName,
+            type : type
+        }
     }
+
 
     return new Promise((resolve,reject) => {
         firestore.addData(uId,payload)
         .then((result) => {
-            resolve({status : true, payload : payload})
+            resolve({status : true, notificationPayload : notificationPayload})
             return
         })
         .catch(e => {
-            reject(e)
-            return {status: false, message : 'Failed to add data'}
+            resolve({status: false, message : 'Failed to add data'})
+            return 
         })
 
     })
@@ -62,7 +75,7 @@ const notifiUsers = (uId,payload) => {
             return
         })
         .catch(error => {
-            resolve({status : false,message : 'Failed'})
+            resolve({status : false, message : 'Failed'})
             return
         })
     })

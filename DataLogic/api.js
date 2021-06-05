@@ -14,13 +14,22 @@ router.post('/addData', VerifyToken, function(req,res,next){
 
     dataLogic.addData(userId,req.body)
     .then( (r) => {
-        dataLogic.notifyUsers(userId,r.notificationMessage)
-        .then( r => {
-            res.send(r)
-        })
-        .catch(e => {
-            res.send({status : true, successCount : 0})
-        })
+        if(r.status){
+            dataLogic.notifyUsers(userId,r.notificationPayload)
+            .then( r => {
+                if(r.status){
+                    res.send({status : true, notifiedUsers : r.successCount})
+                } else {
+                    res.send({status : true, notifiedUsers : 0})
+                }
+            })
+            .catch(e => {
+                res.send({status : true, successCount : 0})
+            })
+        } else {
+            res.send({status : false, errorCode : 108, message : "Failed to add Data"})
+        }
+    
     })
     .catch( e=>{
         console.log(e);

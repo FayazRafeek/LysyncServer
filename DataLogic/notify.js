@@ -3,7 +3,6 @@
 var firestore = require('../Firebase/firestore')
 var fcm = require('../Firebase/fcm')
 const notifyDataAdd = async (uId,payload) => {
-
     
     var devices = await  firestore.getDevices(uId);
     var fcmTokens = new Array();
@@ -20,7 +19,7 @@ const notifyDataAdd = async (uId,payload) => {
         return await fcm.notifyDataAdd(fcmTokens,payload)
 
     } else {
-        return;
+        return {status : false, errorCode : 109};
     }
 
 }
