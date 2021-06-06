@@ -90,18 +90,7 @@ const addData = async (uId,payload) => {
 
 const getAllDatas = async (uId) => {
 
-    var r = await db.collection('Users').doc(uId).collection('Datas').get();
-
-    var output = [];
-
-    if(!r.empty){
-        r.forEach(doc => {
-           output.push(doc.data())
-        })
-        return {status : true, output : output}
-    } else {
-        return {status : true, output : ''}
-    }                           
+    return await db.collection('Users').doc(uId).collection('Datas').get();                          
 
 }
 

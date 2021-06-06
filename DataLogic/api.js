@@ -45,7 +45,7 @@ router.get('/getAllDatas', VerifyToken, function(req,res,next){
 
     dataLogic.getAllData(req.userId)
     .then(r => {
-
+        console.log("R => " + JSON.stringify(r));
         if(r.status){
             res.send({status : true,output : r.output})
         } else{
@@ -53,6 +53,7 @@ router.get('/getAllDatas', VerifyToken, function(req,res,next){
         }
     })
     .catch( e => {
+        console.log(e);
         res.send({status : false,message : 'Failed to get datas'})
     })
 });

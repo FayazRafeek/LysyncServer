@@ -87,15 +87,31 @@ const notifiUsers = (uId,payload) => {
 }
 
 
-async function getAllData(uId) {
+const getAllData = uId =>  {
 
-    await firestore.getAllDatas(uId)
-    .then((result) => {
-        return {status: true, output : result.output}
+    return new Promise((resolve,rejct) => {
+        firestore.getAllDatas(uId)
+        .then((result) => {
+
+            var output = [];
+
+            if(!result.empty){
+                result.forEach(doc => {
+                   output.push(doc.data())
+                })
+                resolve({status : true, output : output})
+            } else {
+                resolve( {status : false, message : 'No datas available', errorCode : 113})
+            } 
+        })
+        .catch(e => {
+            console.log(e);
+            resolve( {status: false, message : 'Failed to get data', errorCode : 112})
+        })
+
+        return;
     })
-    .catch(e => {
-        return {status: false, message : 'Failed to add data'}
-    })
+   
 }
 
 module.exports.addData = addData
