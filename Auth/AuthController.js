@@ -86,7 +86,7 @@ router.post('/registerGUser',function(req,res) {
                     firestore.addGUser(name,email,uId)
                      .then( r => {
                         if(r){
-                            var token = jwt.sign({ id: uId }, config.secret, {
+                            var token = jwt.sign({ id: r }, config.secret, {
                                 expiresIn: 86400 // expires in 24 hours
                                 });
 
@@ -100,7 +100,7 @@ router.post('/registerGUser',function(req,res) {
                 firestore.addGUser(name,email,uId)
                 .then( r => {
                    if(r){
-                       var token = jwt.sign({ id: uId }, config.secret, {
+                       var token = jwt.sign({ id: r }, config.secret, {
                            expiresIn: 86400 // expires in 24 hours
                            });
 
@@ -148,6 +148,10 @@ router.post('/login', function(req, res) {
 
         if(result.status){
 
+            if(result.user.data().gUser){
+                return res.send({status: false, message : "Google sign in exist", errorCode : 114})
+            }
+
             var user = result.user
             var hashPass = user.data().pass;
             var passwordIsValid = bcrypt.compareSync(pass, hashPass);
@@ -182,20 +186,16 @@ router.post('/loginGUser', function(req, res) {
 
        if(r){
 
-           var email = r.getPayload().email
+           var Uid = r.getPayload().sub
 
-           firestore.getUserWithEmail(email)
+           firestore.getUserWithGUid(Uid)
             .then((result) => {
                 if(result.status){
 
-                    var user = result.user.data()
-                    var uId = user.id
-                    var name = user.name
-
+                    var uId = result.user.id
                     var token = jwt.sign({ id: uId }, config.secret, {
                         expiresIn: 86400 // expires in 24 hours
                         });
-
                     res.send({status : true, token : token})
 
                 } else {

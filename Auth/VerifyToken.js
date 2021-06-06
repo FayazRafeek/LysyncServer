@@ -9,13 +9,17 @@ function verifyToken(req, res, next) {
     return res.send({ status: false, message: 'No token provided.', errorCode : 111 });
     
   jwt.verify(token, config.secret, function(err, decoded) {
-    if (err)
-    return res.send({ status: false, message: 'Failed to authenticate token.', errorCode : 110 });
+    if (err){
+      console.log("ERROR VERIFY => " + err);
+      return res.send({ status: false, message: 'Failed to authenticate token.', errorCode : 110 });
+    }
+    
+    console.log("UserId -> " + decoded.id);
+    if(!decoded.id){
+      return res.send({ status: false, message: 'Failed to authenticate token.', errorCode : 110 });
+    }
       
-    // if everything good, save to request for use in other routes
-    console.log("Decoded -> " + decoded);
-    req.userId = decoded.id;
-    console.log("\n\nReq Bodu ==> " + JSON.stringify(req.body));
+    req.userId = decoded.id
     next();
     
   });

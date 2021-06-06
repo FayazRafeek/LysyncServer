@@ -43,13 +43,14 @@ router.post('/addData', VerifyToken, function(req,res,next){
 
 router.get('/getAllDatas', VerifyToken, function(req,res,next){
 
+    console.log("User Id => " + req.userId)
     dataLogic.getAllData(req.userId)
     .then(r => {
         console.log("R => " + JSON.stringify(r));
         if(r.status){
             res.send({status : true,output : r.output})
         } else{
-            res.send({status : false,message : r.message})
+            res.send({status : false,message : r.message, errorCode : r.errorCode})
         }
     })
     .catch( e => {

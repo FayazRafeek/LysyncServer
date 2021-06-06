@@ -25,11 +25,15 @@ const addGUser = async (name,email,uId) => {
     const data = {
         name: name,
         email: email,
-        gUser:true
+        gUser:true,
+        gUserId : uId
       };
 
-    const i = await db.collection('Users').doc(uId).set(data)
-    return  i.writeTime
+    const i = await db.collection('Users').add(data)
+    if(i.id)
+      return i.id
+    else
+      return
 }
 
 const updateToken = async (Uid,token) => {
@@ -54,11 +58,23 @@ const getUserWithEmail = async (email) => {
     return {status : true, user : doc}
 }
 
+const getUserWithGUid = async (gUserId) => {
+
+    const res = await  db.collection('Users').where('gUserId', '==', gUserId).limit(1).get();
+
+    if(res.empty || res.docs.length < 1){
+        return {status : false}
+    }
+    var doc = res.docs[0]
+    return {status : true, user : doc}
+}
+
 module.exports.addUser = addUser;
 module.exports.addGUser = addGUser;
 module.exports.updateToken = updateToken;
 module.exports.getUser = getUser;
 module.exports.getUserWithEmail = getUserWithEmail;
+module.exports.getUserWithGUid = getUserWithGUid;
 
 // AUTH ENDS
 
@@ -90,6 +106,7 @@ const addData = async (uId,payload) => {
 
 const getAllDatas = async (uId) => {
 
+    console.log("USER ID => " + uId);
     return await db.collection('Users').doc(uId).collection('Datas').get();                          
 
 }
