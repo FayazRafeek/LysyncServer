@@ -25,7 +25,7 @@ const addData = (uId,body) =>  {
         notificationPayload = {
             title : "New Data added",
             desc : data,
-            type : text
+            type : "text"
         }
     } else {
 

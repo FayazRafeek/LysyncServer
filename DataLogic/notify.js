@@ -16,7 +16,13 @@ const notifyDataAdd = async (uId,payload) => {
             }
         })
 
-        return await fcm.notifyDataAdd(fcmTokens,payload)
+        var title = payload.type
+        var desc = payload.desc
+        var type = payload.type
+
+        console.log("\n\nPayload => " + title + " == " + desc + " == " + type)
+
+        return await fcm.notifyDataAdd(fcmTokens,title,desc,type)
 
     } else {
         return {status : false, errorCode : 109};
