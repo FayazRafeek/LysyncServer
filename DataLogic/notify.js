@@ -16,7 +16,7 @@ const notifyDataAdd = async (uId,payload) => {
             }
         })
 
-        var title = payload.type
+        var title = payload.title
         var desc = payload.desc
         var type = payload.type
 
