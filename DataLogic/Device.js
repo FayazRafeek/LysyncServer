@@ -34,6 +34,22 @@ router.post('/addDevice', VerifyToken, function(req, res, next) {
 
 });
 
+router.post('/updateFcmToken', VerifyToken, function(req, res, next) {
+  
+    var uId = req.userId;
+    var newToken = req.body.newToken;
+    var deviceId = req.body.deviceId
+
+    firestore.updateFcmToken(uId,deviceId,newToken)
+    .then((result) => {
+        res.send({status : true})
+    })
+    .catch(e => {
+        res.send({status : false, message : "Failed to update tokn", errorCode : 116})
+    })
+
+});
+
 
 router.delete('/removeDevice/:deviceId', VerifyToken, function(req, res, next) {
   

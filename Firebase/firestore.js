@@ -88,6 +88,11 @@ const removeDevice = async (uId,deviceId) => {
     return await db.collection('Users').doc(uId).collection('Devices').doc(deviceId).delete()
 }
 
+const updateFcmToken = async (uId,deviceId,newToken) => {
+    return await db.collection('Users').doc(uId).collection('Devices').doc(deviceId).update({fcmToken : newToken})
+}
+
+
 const getDevices = async (uId) => {
     return await db.collection('Users').doc(uId).collection('Devices').get()
 }
@@ -95,6 +100,7 @@ const getDevices = async (uId) => {
 module.exports.addDevice = addDevice;
 module.exports.getDevices = getDevices;
 module.exports.removeDevice = removeDevice;
+module.exports.updateFcmToken = updateFcmToken
 
 // DATA LOGIC
 
