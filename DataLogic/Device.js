@@ -11,10 +11,10 @@ var VerifyToken = require('../Auth/VerifyToken');
 router.post('/addDevice', VerifyToken, function(req, res, next) {
   
     var uId = req.userId;
-    var deviceId = req.body.deviceId;
-    var deviceType = req.body.type;
-    var devicName = req.body.name;
-    var fcmToken = req.body.fcmToken;
+    var deviceId = req.body.data.deviceId;
+    var deviceType = req.body.data.type;
+    var devicName = req.body.data.name;
+    var fcmToken = req.body.data.fcmToken;
 
     const device = {
         deviceId : deviceId,
